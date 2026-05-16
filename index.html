@@ -3,31 +3,774 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="扣子编程，你的 AI 开发伙伴已就位" />
-    <title>扣子编程 - AI 开发伙伴</title>
-    <link rel="stylesheet" href="/styles/main.css" />
+    <meta name="description" content="西柚 - 斜杠青年 / 航天研发工程师的个人主页" />
+    <title>西柚 | 斜杠青年</title>
+    <link rel="preconnect" href="https://fonts.googleapis.cn" />
+    <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin />
+    <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      /* ===== Tailwind v4 自定义主题 ===== */
+      @theme {
+        --color-space-dark: #0a0e1a;
+        --color-space-deeper: #060912;
+        --color-space-card: rgba(15, 23, 52, 0.6);
+        --color-accent-blue: #4f8cff;
+        --color-accent-purple: #a78bfa;
+        --color-accent-cyan: #22d3ee;
+        --color-accent-glow: rgba(79, 140, 255, 0.15);
+        --color-text-primary: #e2e8f0;
+        --color-text-secondary: #94a3b8;
+        --color-text-muted: #64748b;
+        --font-sans: 'Inter', 'Noto Sans SC', sans-serif;
+      }
+
+      /* ===== 全局基础 ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'Inter', 'Noto Sans SC', sans-serif;
+        background: var(--color-space-dark);
+        color: var(--color-text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+      ::selection {
+        background: rgba(79, 140, 255, 0.3);
+        color: #fff;
+      }
+
+      /* ===== 星空粒子背景 ===== */
+      #stars-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ===== 星云光晕 ===== */
+      .nebula-glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .nebula-1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(79, 140, 255, 0.12), transparent);
+        top: -200px;
+        right: -150px;
+        animation: nebulaDrift1 20s ease-in-out infinite;
+      }
+      .nebula-2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(167, 139, 250, 0.10), transparent);
+        bottom: -150px;
+        left: -100px;
+        animation: nebulaDrift2 25s ease-in-out infinite;
+      }
+      .nebula-3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(34, 211, 238, 0.08), transparent);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: nebulaDrift3 18s ease-in-out infinite;
+      }
+
+      @keyframes nebulaDrift1 {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, 40px); }
+      }
+      @keyframes nebulaDrift2 {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-40px, -30px); }
+      }
+      @keyframes nebulaDrift3 {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-45%, -55%) scale(1.15); }
+      }
+
+      /* ===== 所有内容在 z-index 层之上 ===== */
+      .content-layer {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== 导航栏 ===== */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(10, 14, 26, 0.7);
+        border-bottom: 1px solid rgba(79, 140, 255, 0.08);
+        transition: all 0.3s ease;
+      }
+      .navbar.scrolled {
+        background: rgba(10, 14, 26, 0.9);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      }
+      .nav-link {
+        position: relative;
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.3s;
+        padding: 0.25rem 0;
+        cursor: pointer;
+      }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-purple));
+        transition: width 0.3s ease;
+        border-radius: 1px;
+      }
+      .nav-link:hover {
+        color: var(--color-text-primary);
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* ===== 英雄区 ===== */
+      .avatar-glow {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        margin: 0 auto;
+      }
+      .avatar-glow::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-purple), var(--color-accent-cyan));
+        opacity: 0.6;
+        animation: spinGlow 4s linear infinite;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        -webkit-mask-composite: xor;
+        padding: 3px;
+      }
+      @keyframes spinGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        position: relative;
+        z-index: 1;
+        border: 3px solid transparent;
+      }
+
+      /* ===== 打字效果 ===== */
+      .typing-text {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 2px solid var(--color-accent-blue);
+        animation: typing 2.5s steps(12) forwards, blink 0.8s step-end infinite;
+        max-width: 0;
+      }
+      @keyframes typing {
+        to { max-width: 7em; }
+      }
+      @keyframes blink {
+        50% { border-color: transparent; }
+      }
+
+      /* ===== 渐变文字 ===== */
+      .gradient-text {
+        background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-purple), var(--color-accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* ===== 区块通用 ===== */
+      section {
+        padding: 5rem 1.5rem;
+      }
+      .section-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .section-subtitle {
+        color: var(--color-text-muted);
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 0.95rem;
+      }
+
+      /* ===== 卡片 ===== */
+      .glass-card {
+        background: var(--color-space-card);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(79, 140, 255, 0.1);
+        border-radius: 1rem;
+        padding: 1.75rem;
+        transition: all 0.4s ease;
+      }
+      .glass-card:hover {
+        border-color: rgba(79, 140, 255, 0.25);
+        box-shadow: 0 8px 32px rgba(79, 140, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      /* ===== 时间线 ===== */
+      .timeline-item {
+        position: relative;
+        padding-left: 2rem;
+        padding-bottom: 2rem;
+      }
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--color-accent-blue), var(--color-accent-purple));
+        opacity: 0.3;
+      }
+      .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: -5px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--color-accent-blue);
+        box-shadow: 0 0 12px rgba(79, 140, 255, 0.5);
+      }
+      .timeline-item:last-child {
+        padding-bottom: 0;
+      }
+      .timeline-item:last-child::before {
+        display: none;
+      }
+
+      /* ===== 技能标签 ===== */
+      .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 2rem;
+        background: rgba(79, 140, 255, 0.08);
+        border: 1px solid rgba(79, 140, 255, 0.15);
+        color: var(--color-text-primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+      .skill-tag:hover {
+        background: rgba(79, 140, 255, 0.15);
+        border-color: rgba(79, 140, 255, 0.3);
+        box-shadow: 0 0 20px rgba(79, 140, 255, 0.1);
+        transform: translateY(-1px);
+      }
+
+      /* ===== 兴趣卡片 ===== */
+      .interest-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+      }
+
+      /* ===== 联系区 ===== */
+      .contact-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        background: rgba(79, 140, 255, 0.08);
+        border: 1px solid rgba(79, 140, 255, 0.15);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+      .contact-link:hover {
+        background: rgba(79, 140, 255, 0.15);
+        border-color: rgba(79, 140, 255, 0.3);
+        box-shadow: 0 0 24px rgba(79, 140, 255, 0.12);
+        transform: translateY(-2px);
+      }
+
+      /* ===== 滚动渐入动画 ===== */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ===== 流星 ===== */
+      .shooting-star {
+        position: fixed;
+        width: 3px;
+        height: 3px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.3);
+        animation: shoot 3s ease-in-out infinite;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .shooting-star:nth-child(1) { top: 10%; left: 70%; animation-delay: 0s; }
+      .shooting-star:nth-child(2) { top: 30%; left: 40%; animation-delay: 5s; }
+      .shooting-star:nth-child(3) { top: 50%; left: 85%; animation-delay: 10s; }
+
+      @keyframes shoot {
+        0% { transform: translateX(0) translateY(0); opacity: 1; }
+        70% { opacity: 1; }
+        100% { transform: translateX(-300px) translateY(200px); opacity: 0; }
+      }
+
+      /* ===== 响应式 ===== */
+      @media (max-width: 640px) {
+        section { padding: 3rem 1rem; }
+        .section-title { font-size: 1.4rem; }
+        .avatar-glow { width: 140px; height: 140px; }
+        .navbar .nav-links { gap: 1rem; }
+        .nav-link { font-size: 0.8rem; }
+      }
+
+      /* ===== 分割线装饰 ===== */
+      .divider {
+        width: 60px;
+        height: 3px;
+        margin: 2.5rem auto;
+        background: linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-purple));
+        border-radius: 2px;
+      }
+
+      /* ===== 标签云区域 ===== */
+      .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <main class="main-wrapper">
-        <div class="content-container">
+    <!-- 星空粒子 Canvas -->
+    <canvas id="stars-canvas"></canvas>
+
+    <!-- 星云光晕 -->
+    <div class="nebula-glow nebula-1"></div>
+    <div class="nebula-glow nebula-2"></div>
+    <div class="nebula-glow nebula-3"></div>
+
+    <!-- 流星 -->
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+
+    <!-- ===== 导航栏 ===== -->
+    <nav class="navbar" id="navbar">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+        <a href="#hero" class="text-lg font-bold gradient-text no-underline">西柚</a>
+        <div class="nav-links flex items-center gap-6 sm:gap-8">
+          <a href="#about" class="nav-link">关于</a>
+          <a href="#career" class="nav-link">经历</a>
+          <a href="#interests" class="nav-link">关注</a>
+          <a href="#skills" class="nav-link">技能</a>
+          <a href="#contact" class="nav-link">联系</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== 内容区域 ===== -->
+    <div class="content-layer">
+
+      <!-- ===== 英雄区 Hero ===== -->
+      <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center pt-20 pb-12">
+        <div class="avatar-glow mb-8 fade-in">
           <img
-            src="https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze-coding/icon/coze-coding.gif"
-            alt="扣子编程 Logo"
-            class="logo-image"
+            src="/images/horse-avatar.jpg"
+            alt="西柚 - 奔跑的马"
+            class="avatar-img"
           />
-          <div>
-            <div class="text-container">
-              <h1 class="heading">
-                应用开发中
-              </h1>
-              <p class="description">
-                请稍后，页面即将呈现
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 fade-in">
+          西柚
+        </h1>
+        <div class="text-xl sm:text-2xl text-text-secondary mb-6 fade-in">
+          <span class="typing-text gradient-text font-semibold"># 斜杠青年</span>
+        </div>
+        <p class="text-text-muted max-w-md text-sm sm:text-base fade-in">
+          航天研发工程师 · 20年深耕军工航天领域<br />
+          持续探索投资、创业与副业的无限可能
+        </p>
+        <div class="flex gap-4 mt-10 fade-in">
+          <a href="#about" class="px-6 py-3 rounded-full font-semibold text-sm no-underline transition-all duration-300"
+             style="background: linear-gradient(135deg, #4f8cff, #a78bfa); color: #fff; box-shadow: 0 4px 20px rgba(79, 140, 255, 0.3);"
+             onmouseover="this.style.boxShadow='0 6px 30px rgba(79, 140, 255, 0.5)'; this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.boxShadow='0 4px 20px rgba(79, 140, 255, 0.3)'; this.style.transform='translateY(0)'">
+            了解更多
+          </a>
+          <a href="#contact" class="px-6 py-3 rounded-full font-semibold text-sm no-underline transition-all duration-300"
+             style="background: rgba(79, 140, 255, 0.08); border: 1px solid rgba(79, 140, 255, 0.25); color: #e2e8f0;"
+             onmouseover="this.style.background='rgba(79, 140, 255, 0.15)'; this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.background='rgba(79, 140, 255, 0.08)'; this.style.transform='translateY(0)'">
+            联系我
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== 关于我 ===== -->
+      <section id="about">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="section-title fade-in">关于我</h2>
+          <p class="section-subtitle fade-in">About Me</p>
+          <div class="glass-card fade-in">
+            <div class="flex flex-col sm:flex-row gap-6 items-start">
+              <div class="flex-shrink-0 w-full sm:w-32 h-32 rounded-xl overflow-hidden border border-accent-blue/20"
+                   style="background: linear-gradient(135deg, rgba(79,140,255,0.08), rgba(167,139,250,0.08));">
+                <div class="w-full h-full flex items-center justify-center text-5xl opacity-60">🚀</div>
+              </div>
+              <div class="space-y-3 flex-1">
+                <p class="text-text-secondary leading-relaxed">
+                  大家好，我是 <strong class="text-text-primary">西柚</strong>，一名深耕军工与航天领域近
+                  <strong class="text-text-primary">20 年</strong>的研发工程师。
+                </p>
+                <p class="text-text-secondary leading-relaxed">
+                  硕士毕业于 <strong class="text-text-primary">西北工业大学</strong>，长期从事
+                  <strong class="text-text-primary">商业航天硬件设计</strong>相关工作，
+                  涵盖电源设计、电子设计等方向。
+                </p>
+                <p class="text-text-secondary leading-relaxed">
+                  工作之余，我也是一个不折不扣的 <strong class="gradient-text">#斜杠青年</strong>，
+                  对 <strong>投资、创业、副业</strong> 充满好奇与热情，持续探索技术之外的多元可能。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider fade-in"></div>
+
+      <!-- ===== 经历 ===== -->
+      <section id="career">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="section-title fade-in">经历</h2>
+          <p class="section-subtitle fade-in">Education &amp; Career</p>
+          <div class="grid sm:grid-cols-2 gap-6">
+            <!-- 教育 -->
+            <div class="glass-card fade-in">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
+                     style="background: rgba(79,140,255,0.12); color: #4f8cff;">🎓</div>
+                <h3 class="text-lg font-semibold">教育背景</h3>
+              </div>
+              <div class="timeline-item">
+                <div class="text-sm text-text-muted mb-1">2000 - 2005</div>
+                <div class="font-semibold text-text-primary">硕士 · 西北工业大学</div>
+                <div class="text-sm text-text-secondary">航天相关专业</div>
+              </div>
+            </div>
+            <!-- 工作 -->
+            <div class="glass-card fade-in">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
+                     style="background: rgba(167,139,250,0.12); color: #a78bfa;">💼</div>
+                <h3 class="text-lg font-semibold">工作经历</h3>
+              </div>
+              <div class="timeline-item">
+                <div class="text-sm text-text-muted mb-1">2005 — 至今</div>
+                <div class="font-semibold text-text-primary">研发工程师</div>
+                <div class="text-sm text-text-secondary">军工 · 航天领域</div>
+              </div>
+              <div class="mt-4 p-3 rounded-lg text-sm text-text-secondary leading-relaxed"
+                   style="background: rgba(79,140,255,0.06); border: 1px solid rgba(79,140,255,0.08);">
+                <span class="text-accent-blue font-semibold">≈ 20 年</span> 深耕军工与航天研发，
+                参与过多型重要装备与商业航天项目的硬件设计与开发。
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间线总览 -->
+          <div class="glass-card mt-6 fade-in">
+            <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+              <span>📈</span> 时间线总览
+            </h3>
+            <div class="flex flex-wrap gap-0">
+              <div class="flex-1 min-w-[100px] p-3 text-center border-r border-accent-blue/10 last:border-r-0">
+                <div class="text-xs text-text-muted">2000</div>
+                <div class="text-sm font-semibold text-accent-blue">入学</div>
+                <div class="text-xs text-text-secondary">西工大硕士</div>
+              </div>
+              <div class="flex-1 min-w-[100px] p-3 text-center border-r border-accent-blue/10 last:border-r-0">
+                <div class="text-xs text-text-muted">2005</div>
+                <div class="text-sm font-semibold text-accent-purple">入行</div>
+                <div class="text-xs text-text-secondary">军工航天研发</div>
+              </div>
+              <div class="flex-1 min-w-[100px] p-3 text-center border-r border-accent-blue/10 last:border-r-0">
+                <div class="text-xs text-text-muted">至今</div>
+                <div class="text-sm font-semibold text-accent-cyan">深耕</div>
+                <div class="text-xs text-text-secondary">20年经验</div>
+              </div>
+              <div class="flex-1 min-w-[100px] p-3 text-center">
+                <div class="text-xs text-text-muted">未来</div>
+                <div class="text-sm font-semibold gradient-text">斜杠</div>
+                <div class="text-xs text-text-secondary">探索更多可能</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider fade-in"></div>
+
+      <!-- ===== 关注方向 ===== -->
+      <section id="interests">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="section-title fade-in">关注方向</h2>
+          <p class="section-subtitle fade-in">Interests &amp; Explorations</p>
+          <div class="grid sm:grid-cols-3 gap-5">
+            <!-- 投资 -->
+            <div class="glass-card fade-in text-center" style="transition-delay: 0.1s;">
+              <div class="interest-icon mx-auto" style="background: rgba(79,140,255,0.12);">
+                <span class="text-2xl">📈</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">投资</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                关注价值投资与长期复利，探索二级市场与新兴赛道的投资机会
+              </p>
+            </div>
+            <!-- 创业 -->
+            <div class="glass-card fade-in text-center" style="transition-delay: 0.2s;">
+              <div class="interest-icon mx-auto" style="background: rgba(167,139,250,0.12);">
+                <span class="text-2xl">🚀</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">创业</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                对科技创业与商业创新充满热情，持续关注前沿技术与市场需求
+              </p>
+            </div>
+            <!-- 副业 -->
+            <div class="glass-card fade-in text-center" style="transition-delay: 0.3s;">
+              <div class="interest-icon mx-auto" style="background: rgba(34,211,238,0.12);">
+                <span class="text-2xl">🔧</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">副业</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                探索技术变现与知识输出，寻找工作之外的多元发展路径
               </p>
             </div>
           </div>
         </div>
-      </main>
+      </section>
+
+      <div class="divider fade-in"></div>
+
+      <!-- ===== 技能标签 ===== -->
+      <section id="skills">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="section-title fade-in">技能标签</h2>
+          <p class="section-subtitle fade-in">Skills &amp; Expertise</p>
+          <div class="glass-card fade-in">
+            <div class="tags-cloud">
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #4f8cff;"></span>
+                商业航天硬件
+              </span>
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #a78bfa;"></span>
+                电源设计
+              </span>
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #22d3ee;"></span>
+                电子设计
+              </span>
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #f472b6;"></span>
+                系统架构
+              </span>
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #fb923c;"></span>
+                军工标准
+              </span>
+              <span class="skill-tag">
+                <span class="w-4 h-4 rounded-full" style="background: #34d399;"></span>
+                项目管理
+              </span>
+            </div>
+            <p class="text-center text-text-muted text-sm mt-4">
+              近 20 年聚焦军工与航天领域的硬件研发与设计
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider fade-in"></div>
+
+      <!-- ===== 联系方式 ===== -->
+      <section id="contact">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="section-title fade-in">联系我</h2>
+          <p class="section-subtitle fade-in">Get In Touch</p>
+          <div class="glass-card fade-in inline-block mx-auto px-8 py-6">
+            <div class="flex flex-col sm:flex-row items-center gap-4 justify-center">
+              <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
+                   style="background: rgba(79,140,255,0.12);">
+                ✉️
+              </div>
+              <div class="text-left">
+                <div class="text-sm text-text-muted mb-1">邮箱</div>
+                <a href="mailto:40236543@qq.com" class="text-lg font-semibold text-accent-blue hover:text-accent-cyan transition-colors no-underline">
+                  40236543@qq.com
+                </a>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-accent-blue/10">
+              <p class="text-sm text-text-muted">
+                欢迎交流，无论是技术探讨、行业洞察，还是投资创业心得 ✨
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 页脚 ===== -->
+      <footer class="text-center py-8 px-4 border-t border-accent-blue/5">
+        <p class="text-sm text-text-muted">
+          © 2025 <span class="gradient-text font-semibold">西柚</span> · 斜杠青年 · Made with 🚀
+        </p>
+      </footer>
+
     </div>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+      // ===== 星空粒子系统 =====
+      (function() {
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let animationId;
+
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function createStars(count) {
+          stars = [];
+          for (let i = 0; i < count; i++) {
+            stars.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              r: Math.random() * 1.5 + 0.3,
+              alpha: Math.random() * 0.6 + 0.2,
+              speed: Math.random() * 0.02 + 0.005,
+              twinkle: Math.random() * 100,
+            });
+          }
+        }
+        createStars(300);
+
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const time = Date.now() * 0.001;
+
+          for (const star of stars) {
+            const twinkle = Math.sin(time * star.speed * 10 + star.twinkle) * 0.2 + 0.8;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha * twinkle})`;
+            ctx.fill();
+          }
+
+          animationId = requestAnimationFrame(draw);
+        }
+        draw();
+
+        // 窗口大小变化时重建
+        window.addEventListener('resize', () => {
+          cancelAnimationFrame(animationId);
+          resize();
+          createStars(Math.floor((canvas.width * canvas.height) / 8000));
+          draw();
+        });
+      })();
+
+      // ===== 滚动渐入动画 =====
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+      // ===== 导航栏滚动变色 =====
+      const navbar = document.getElementById('navbar');
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        if (scrollY > 60) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        lastScroll = scrollY;
+      });
+
+      // ===== 初始化 Lucide 图标 =====
+      lucide.createIcons();
+    </script>
   </body>
 </html>
